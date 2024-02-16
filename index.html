@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <title>Exercício do Pássaro</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+
+//configurações iniciais do jogo, definindo tipo de renderização, dimensões e cenas
+var config = {
+
+        type: Phaser.AUTO, // phaser vai decidir automaticamente usar WebGL ou Canvas baseado no navegador
+        width: 800, // largura do jogo em pixels
+        height: 600, // altura do jogo em pixels
+
+        // obejeto contendo as funções da cena
+        scene: {
+            preload: preload, // função chamada antes do jogo começar para carregar ativos
+            create: create, // função chamada uma vez que os ativos são carregados para configurar o jogo
+            update: update //  função chamada a cada quadro para atualizar o estado do jogo
+        }
+    };
+    
+    // cria uma nova instância do jogo com as configurações definidas acima
+    var game = new Phaser.Game(config);
+
+    // declara uma variável para o passarinho nesse caso
+    var passarinho
+    var passarinho2
+
+    // função para carregar ativos antes do jogo começar
+    function preload() {
+        this.load.image('bg', 'assets/bg_space.png'); // carrega a imagem de fundo
+        this.load.spritesheet('bird','assets/bird-purple.png', {frameWidth: 75, frameHeight: 75}); // carrega a spritesheet do passarinho roxo
+        this.load.spritesheet('bird2', 'assets/bird-green.png', {frameWidth: 75, frameHeight: 75}) // carrega a spritesheet do passarinho verde
+    }
+
+    // função para criar os objetos do jogo uma vez que os ativos são carregados
+    function create() {
+        this.add.image(400, 300, 'bg').setScale(1.2); // adiciona a imagem de fundo ao jogo e a dimensiona
+        passarinho = this.add.sprite(100, 300, 'bird').setScale(1.3); // cria e adiciona a sprite do passarinho roxo ao jogo
+        passarinho2 = this.add.sprite(400, 200, 'bird2').setScale(1.3); // cria e adiciona a sprite do passarinho verde ao jogo
+
+        // define a animação 'fly' para o passarinho usando as frames da spritesheet
+        this.anims.create({
+            key: 'fly', // nome da animação
+            frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 7}), // frames da animação
+            frameRate: 10, // define a taxa de quadros da animação para 10 fps
+            repeat: -1 // faz a animação repetir infinitamente
+        });
+
+        passarinho.anims.play('fly', true) // inicia a animação 'fly' para o passarinho
+
+        // define a animação 'fly2' para o segundo passarinho usando as frames da spritesheet
+        this.anims.create({
+            key: 'fly2', // nome da animação
+            frames: this.anims.generateFrameNumbers('bird2', { start: 0, end: 7}), // frames da animação
+            frameRate: 10, // define a taxa de quadros da animação para 10 fps
+            repeat: -1 // faz a animação repetir infinitamente
+        });
+
+        passarinho2.anims.play('fly2', true) // inicia a animação 'fly' para o passarinho
+
+    }
+    
+    //função de atualização chamada a cada quadro para atualizar o estado do jogo
+    function update() {
+
+        // lógica para mover o passarinho em um retangulo
+        // primeiro movimento para a direita
+        if (passarinho.x < 700 && passarinho.direction === 'right') {
+            passarinho.x += 5; // move o passarinho para direita
+        } else if (passarinho.x >= 700) {
+            passarinho.direction = 'down'; // muda a direção do movimento para baixo
+        }
+
+        // movimento para baixo
+        if (passarinho.y < 400 && passarinho.direction === 'down') {
+            passarinho.y += 5; // move para baixo
+        } else if (passarinho.y >= 400) {
+            passarinho.direction = 'left'; // muda a direção para esquerda
+        }
+
+        // movimento para a esquerda
+        if (passarinho.x > 100 && passarinho.direction === 'left') {
+            passarinho.x -= 5; // move o passarinho para esquerda
+        } else if (passarinho.x <= 100) {
+            passarinho.direction = 'up'; // muda a direção do movimento para cima
+        }
+
+        // movimento para cima
+        if (passarinho.y > 200 && passarinho.direction === 'up') {
+            passarinho.y -= 5; //move o passarinho para cima
+        } else if (passarinho.y <= 200) {
+            passarinho.direction = 'right'; // retorna a direção para direita, completando o retagulo
+        }
+
+
+        //fazendo o passarinho 2
+        // Primeiro movimento para a esquerda
+        if (passarinho2.x > 100 && passarinho2.direction === 'left') {
+            passarinho2.x -= 5; // move passarinho 2 para esquerda
+        } else if (passarinho2.x <= 100) {
+            passarinho2.direction = 'up'; // muda a direção para cima
+        }
+
+        if (passarinho2.y > 200 && passarinho2.direction === 'up') {
+            passarinho2.y -= 5; // move passarinho 2 para cima
+        } else if (passarinho2.y <= 200) {
+            passarinho2.direction = 'right'; // muda a direção para direita
+        }
+
+        if (passarinho2.x < 700 && passarinho2.direction === 'right') {
+            passarinho2.x += 5; // move passarinho 2 para direita
+        } else if (passarinho2.x >= 700) {
+            passarinho2.direction = 'down'; // muda a direção para baixo
+        }
+
+        if (passarinho2.y < 400 && passarinho2.direction === 'down') {
+            passarinho2.y += 5; // move passarinho 2 para baixo
+        } else if (passarinho2.y >= 400) {
+            passarinho2.direction = 'left'; // retorna a direção para esquerda completando o retangulo com o passarinho 2
+        }
+    }      
+
+
+  
+
+
+</script>
+
+</body>
+</html>
+
+
